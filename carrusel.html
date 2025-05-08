@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrusel de Imágenes</title>
+    <style>
+        .carousel-container {
+            width: 80%;
+            margin: 50px auto;
+            overflow: hidden;
+            border: 1px solid #ccc;
+        }
+
+        .carousel-slide {
+            display: flex;
+            width: 600%; /* Ajustar según el número de imágenes (6 imágenes * 100%) */
+            transition: transform 0.5s ease-in-out;
+            transform: translateX(0);
+        }
+
+        .carousel-slide img {
+            width: calc(100% / 6); /* Ancho de cada imagen */
+            height: auto;
+            display: block;
+        }
+
+        /* Opcional: Estilos para los controles (necesitarían JavaScript para funcionar) */
+        .carousel-controls {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .carousel-controls button {
+            padding: 8px 15px;
+            margin: 0 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="carousel-container">
+        <div class="carousel-slide">
+            <img src="imagen1.jpg" alt="Imagen 1">
+            <img src="imagen2.jpg" alt="Imagen 2">
+            <img src="imagen3.jpg" alt="Imagen 3">
+            <img src="imagen4.jpg" alt="Imagen 4">
+            <img src="imagen5.jpg" alt="Imagen 5">
+            <img src="imagen6.jpg" alt="Imagen 6">
+        </div>
+    </div>
+
+    <script>
+        const carouselSlide = document.querySelector('.carousel-slide');
+        const images = document.querySelectorAll('.carousel-slide img');
+
+        // Contadores
+        let counter = 0;
+        const size = images[0].clientWidth; // Ancho de una imagen
+
+        // Ajustar la posición inicial
+        carouselSlide.style.transform = `translateX($(-size * counter)px)`;
+
+        // Funciones para los botones (opcional, necesitarían los botones en el HTML)
+        /*
+        function nextSlide(){
+            if (counter >= images.length - 1) return;
+            carouselSlide.style.transition = 'transform 0.5s ease-in-out';
+            counter++;
+            carouselSlide.style.transform = `translateX($(-size * counter)px)`;
+        }
+
+        function prevSlide(){
+            if (counter <= 0) return;
+            carouselSlide.style.transition = 'transform 0.5s ease-in-out';
+            counter--;
+            carouselSlide.style.transform = `translateX($(-size * counter)px)`;
+        }
+
+        carouselSlide.addEventListener('transitionend', () => {
+            if (images[counter].id === 'lastClone'){
+                carouselSlide.style.transition = 'none';
+                counter = images.length - 2;
+                carouselSlide.style.transform = `translateX($(-size * counter)px)`;
+            }
+            if (images[counter].id === 'firstClone'){
+                carouselSlide.style.transition = 'none';
+                counter = images.length - images.length;
+                carouselSlide.style.transform = `translateX($(-size * counter)px)`;
+            }
+        });
+        */
+
+        // Interacción básica: desplazar horizontalmente para cambiar de imagen
+        let startX;
+        let distX;
+
+        carouselSlide.addEventListener('mousedown', (e) => {
+            startX = e.clientX;
+            carouselSlide.style.cursor = 'grabbing';
+        });
+
+        carouselSlide.addEventListener('mouseup', () => {
+            carouselSlide.style.cursor = 'grab';
+            if (distX > 50) { // Desplazamiento hacia la derecha
+                if (counter > 0) {
+                    counter--;
+                }
+            } else if (distX < -50) { // Desplazamiento hacia la izquierda
+                if (counter < images.length - 1) {
+                    counter++;
+                }
+            }
+            carouselSlide.style.transform = `translateX($(-size * counter)px)`;
+            distX = 0;
+        });
+
+        carouselSlide.addEventListener('mousemove', (e) => {
+            if (!startX) return;
+            distX = e.clientX - startX;
+        });
+
+        carouselSlide.addEventListener('mouseleave', () => {
+            startX = null;
+            distX = 0;
+            carouselSlide.style.cursor = 'grab';
+        });
+
+        // Para dispositivos táctiles
+        carouselSlide.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+        });
+
+        carouselSlide.addEventListener('touchend', () => {
+            if (distX > 50) {
+                if (counter > 0) {
+                    counter--;
+                }
+            } else if (distX < -50) {
+                if (counter < images.length - 1) {
+                    counter++;
+                }
+            }
+            carouselSlide.style.transform = `translateX($(-size * counter)px)`;
+            distX = 0;
+        });
+
+        carouselSlide.addEventListener('touchmove', (e) => {
+            if (!startX) return;
+            distX = e.touches[0].clientX - startX;
+        });
+    </script>
+
+</body>
+</html>
